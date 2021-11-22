@@ -27,6 +27,7 @@ class MainViewModel: ViewModel() {
             var key = keySearch.toLowerCase()
             if (key==""){
                 listArticleSearch.value = listArticle.value
+                dataLoading.value = false
             }else{
                 var listSearch = ArrayList<Article>()
                 for (element in listArticle.value!!){
