@@ -13,13 +13,15 @@ import com.ducdiep.newsapp.models.Article
 import java.text.SimpleDateFormat
 import java.util.*
 
-class NewsAdapter(var context: Context,var listArticle:List<Article>): RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
-    var onClick:((Article)->Unit)? = null
-    fun setonClickItem(callBack:(Article)->Unit){
+class NewsAdapter(var context: Context, var listArticle: List<Article>) :
+    RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
+    var onClick: ((Article) -> Unit)? = null
+    fun setonClickItem(callBack: (Article) -> Unit) {
         onClick = callBack
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
-        var view = LayoutInflater.from(context).inflate(R.layout.news_item,parent,false)
+        var view = LayoutInflater.from(context).inflate(R.layout.news_item, parent, false)
         return NewsViewHolder(view)
     }
 
@@ -28,10 +30,10 @@ class NewsAdapter(var context: Context,var listArticle:List<Article>): RecyclerV
         Glide.with(context).load(article.urlToImage).into(holder.imgAvatar)
         holder.tvTitle.text = article.title
         holder.tvDescription.text = article.description
-        holder.tvDescription.isSelected =true
+        holder.tvDescription.isSelected = true
         holder.tvSource.text = article.source.name
         holder.tvDate.text = formatDate(article.publishedAt)
-        holder.itemView.setOnClickListener{
+        holder.itemView.setOnClickListener {
             onClick?.invoke(article)
         }
     }
@@ -39,6 +41,7 @@ class NewsAdapter(var context: Context,var listArticle:List<Article>): RecyclerV
     override fun getItemCount(): Int {
         return listArticle.size
     }
+
     class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var imgAvatar = itemView.findViewById<ImageView>(R.id.img_avatar)
         var tvTitle = itemView.findViewById<TextView>(R.id.tv_title)
@@ -46,10 +49,11 @@ class NewsAdapter(var context: Context,var listArticle:List<Article>): RecyclerV
         var tvSource = itemView.findViewById<TextView>(R.id.tv_source_name)
         var tvDate = itemView.findViewById<TextView>(R.id.tv_date)
     }
-    fun formatDate(str:String):String{
+
+    fun formatDate(str: String): String {
         var formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
         var date = formatter.parse(str)
-        var formatDate = SimpleDateFormat("E MMM dd HH:mm",Locale("en"))
+        var formatDate = SimpleDateFormat("E MMM dd HH:mm", Locale("en"))
         return formatDate.format(date)
     }
 }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">NewsApp</string>
+    <string name="enter_pass">Enter pass code</string>
+    <string name="create_pass">Create pass code</string>
 </resources>

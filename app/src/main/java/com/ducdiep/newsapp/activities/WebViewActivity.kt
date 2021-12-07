@@ -1,5 +1,6 @@
 package com.ducdiep.newsapp.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
@@ -11,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_web_view.*
 
 
 class WebViewActivity : AppCompatActivity() {
+    var isStopping:Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_view)
@@ -32,7 +34,19 @@ class WebViewActivity : AppCompatActivity() {
         if (web_view.canGoBack()) {
             web_view.goBack()
         } else {
-            super.onBackPressed()
+            startActivity(Intent(this,MainActivity::class.java))
         }
+    }
+
+    override fun onResume() {
+        if (isStopping){
+            startActivity(Intent(this,LockScreenActivity::class.java))
+        }
+        super.onResume()
+    }
+
+    override fun onStop() {
+        isStopping = true
+        super.onStop()
     }
 }

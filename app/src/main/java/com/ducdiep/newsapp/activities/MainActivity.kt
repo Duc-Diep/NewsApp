@@ -17,10 +17,11 @@ import com.ducdiep.newsapp.viewmodels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 
-class MainActivity : AppCompatActivity(),SwipeRefreshLayout.OnRefreshListener {
-    lateinit var viewModel:MainViewModel
-    lateinit var newsAdapter:NewsAdapter
-    lateinit var job:Job
+class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
+    lateinit var viewModel: MainViewModel
+    lateinit var newsAdapter: NewsAdapter
+    lateinit var job: Job
+    var isStopping:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,31 +41,30 @@ class MainActivity : AppCompatActivity(),SwipeRefreshLayout.OnRefreshListener {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                    job.cancel()
-                    job = CoroutineScope(Dispatchers.Main).launch {
-                        delay(500)
-                        viewModel.getListSearch(edt_search.text.toString())
-                    }
-                    job.start()
+                job.cancel()
+                job = CoroutineScope(Dispatchers.Main).launch {
+                    delay(500)
+                    viewModel.getListSearch(edt_search.text.toString())
+                }
+                job.start()
             }
 
         })
     }
 
 
-
     private fun initViewModel() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.listArticle.observe(this){
+        viewModel.listArticle.observe(this) {
             setupAdapter(it!!)
         }
-        viewModel.listArticleSearch.observe(this){
+        viewModel.listArticleSearch.observe(this) {
             setupAdapter(it!!)
         }
-        viewModel.dataLoading.observe(this){
-            if (it==true){
+        viewModel.dataLoading.observe(this) {
+            if (it == true) {
                 refresh_layout.isRefreshing = true
-            }else{
+            } else {
                 refresh_layout.isRefreshing = false
             }
         }
@@ -72,12 +72,13 @@ class MainActivity : AppCompatActivity(),SwipeRefreshLayout.OnRefreshListener {
 
     }
 
-    private fun setupAdapter(list:List<Article>) {
-        newsAdapter = NewsAdapter(this,list)
+    private fun setupAdapter(list: List<Article>) {
+        newsAdapter = NewsAdapter(this, list)
         newsAdapter.setonClickItem {
-            var intent = Intent(this,WebViewActivity::class.java)
-            intent.putExtra("url",it.url)
+            var intent = Intent(this, WebViewActivity::class.java)
+            intent.putExtra("url", it.url)
             startActivity(intent)
+            finish()
             Toast.makeText(this, "${it.title}", Toast.LENGTH_SHORT).show()
         }
         rcv_news.adapter = newsAdapter
@@ -86,5 +87,21 @@ class MainActivity : AppCompatActivity(),SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
         viewModel.fetchListNews("us", API_KEY)
         refresh_layout.isRefreshing = false
+    }
+
+    override fun onResume() {
+        if (isStopping){
+            startActivity(Intent(this,LockScreenActivity::class.java))
+        }
+        super.onResume()
+    }
+
+    override fun onStop() {
+        isStopping = true
+        super.onStop()
+    }
+
+    override fun onBackPressed() {
+        finish()
     }
 }
