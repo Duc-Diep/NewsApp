@@ -57,6 +57,7 @@ class LockScreenActivity : AppCompatActivity() {
         }
         btn_reset.setOnClickListener{
             viewModel.resetData()
+            viewModel.enterValue = ""
         }
     }
 
