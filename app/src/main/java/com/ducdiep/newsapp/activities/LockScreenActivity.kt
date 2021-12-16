@@ -3,11 +3,13 @@ package com.ducdiep.newsapp.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import com.ducdiep.newsapp.IS_BACKGROUND
 import com.ducdiep.newsapp.R
 import com.ducdiep.newsapp.viewmodels.LockScreenViewModel
 import kotlinx.android.synthetic.main.activity_lock_screen.*
@@ -15,13 +17,14 @@ import kotlinx.android.synthetic.main.activity_lock_screen.*
 class LockScreenActivity : AppCompatActivity() {
     lateinit var viewModel: LockScreenViewModel
     lateinit var ani: Animation
+    var isBackground:Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lock_screen)
+        isBackground = intent.getBooleanExtra(IS_BACKGROUND,false)
         ani = AnimationUtils.loadAnimation(this,R.anim.shake_animation)
         initViewModel()
         setClick()
-
     }
 
     private fun setClick() {
@@ -106,9 +109,12 @@ class LockScreenActivity : AppCompatActivity() {
         }
         viewModel.isSuccess.observe(this){
             if (it==true){
-                Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this,MainActivity::class.java))
-                finish()
+                if (isBackground){
+                    finish()
+                }else{
+                    Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this,MainActivity::class.java))
+                }
             }else{
                 startAnimation()
                 Toast.makeText(this, "Password incorrect", Toast.LENGTH_SHORT).show()

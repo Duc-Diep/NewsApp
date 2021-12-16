@@ -27,7 +27,7 @@ class MainViewModel : ViewModel() {
         if (listArticle.value != null) {
             dataLoading.value = true
             var key = keySearch.toLowerCase()
-            if (key == "") {
+            if (key.isEmpty()) {
                 listArticleSearch.value = listArticle.value
                 dataLoading.value = false
             } else {

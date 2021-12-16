@@ -8,14 +8,14 @@ import androidx.lifecycle.MutableLiveData
 import com.ducdiep.newsapp.repository.AppPreferences
 
 class LockScreenViewModel(application: Application) : AndroidViewModel(application) {
-    var context: Context = getApplication<Application>().applicationContext
-    var stateCircle1 = MutableLiveData<Boolean>()
-    var stateCircle2 = MutableLiveData<Boolean>()
-    var stateCircle3 = MutableLiveData<Boolean>()
-    var stateCircle4 = MutableLiveData<Boolean>()
-    var isFirstTime = MutableLiveData<Boolean>()
-    var isSuccess = MutableLiveData<Boolean>()
-    var isCreate = MutableLiveData<Boolean>()
+    val context: Context = getApplication<Application>().applicationContext
+    val stateCircle1 = MutableLiveData<Boolean>()
+    val stateCircle2 = MutableLiveData<Boolean>()
+    val stateCircle3 = MutableLiveData<Boolean>()
+    val stateCircle4 = MutableLiveData<Boolean>()
+    val isFirstTime = MutableLiveData<Boolean>()
+    val isSuccess = MutableLiveData<Boolean>()
+    val isCreate = MutableLiveData<Boolean>()
 
     var currentPosition = 1
     var enterValue = ""
@@ -23,35 +23,28 @@ class LockScreenViewModel(application: Application) : AndroidViewModel(applicati
     init {
         AppPreferences.init(context)
         isFirstTime.value = AppPreferences.isFirstTime
-        stateCircle1.value = false
-        stateCircle2.value = false
-        stateCircle3.value = false
-        stateCircle4.value = false
+        resetState()
     }
 
     fun updateValue(value: String) {
         when (currentPosition) {
             1 -> {
                 enterValue += value
-                Log.d("Pass", "createOrCheckPassword: $enterValue")
                 currentPosition++
                 stateCircle1.value = true
             }
             2 -> {
                 enterValue += value
-                Log.d("Pass", "createOrCheckPassword: $enterValue")
                 currentPosition++
                 stateCircle2.value = true
             }
             3 -> {
                 enterValue += value
-                Log.d("Pass", "createOrCheckPassword: $enterValue")
                 currentPosition++
                 stateCircle3.value = true
             }
             4 -> {
                 enterValue += value
-                Log.d("Pass", "createOrCheckPassword: $enterValue")
                 stateCircle4.value = true
                 createOrCheckPassword()
                 enterValue = ""
@@ -65,7 +58,6 @@ class LockScreenViewModel(application: Application) : AndroidViewModel(applicati
     private fun createOrCheckPassword() {
         if (isFirstTime.value == true) {
             isCreate.value = true
-            Log.d("Pass", "createOrCheckPassword: $enterValue")
             AppPreferences.password = enterValue
             AppPreferences.isFirstTime = false
             isFirstTime.value = false
@@ -81,6 +73,9 @@ class LockScreenViewModel(application: Application) : AndroidViewModel(applicati
 
     fun resetData() {
         currentPosition = 1
+        resetState()
+    }
+    fun resetState(){
         stateCircle1.value = false
         stateCircle2.value = false
         stateCircle3.value = false

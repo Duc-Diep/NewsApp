@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.ducdiep.newsapp.API_KEY
 import com.ducdiep.newsapp.R
+import com.ducdiep.newsapp.URL
 import com.ducdiep.newsapp.adapters.NewsAdapter
 import com.ducdiep.newsapp.models.Article
 import com.ducdiep.newsapp.viewmodels.MainViewModel
@@ -21,7 +22,6 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     lateinit var viewModel: MainViewModel
     lateinit var newsAdapter: NewsAdapter
     lateinit var job: Job
-    var isStopping:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,10 +56,10 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     private fun initViewModel() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.listArticle.observe(this) {
-            setupAdapter(it!!)
+            setupAdapter(it)
         }
         viewModel.listArticleSearch.observe(this) {
-            setupAdapter(it!!)
+            setupAdapter(it)
         }
         viewModel.dataLoading.observe(this) {
             if (it == true) {
@@ -72,33 +72,26 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     }
 
-    private fun setupAdapter(list: List<Article>) {
-        newsAdapter = NewsAdapter(this, list)
-        newsAdapter.setonClickItem {
-            var intent = Intent(this, WebViewActivity::class.java)
-            intent.putExtra("url", it.url)
-            startActivity(intent)
-            finish()
-            Toast.makeText(this, "${it.title}", Toast.LENGTH_SHORT).show()
+    private fun setupAdapter(list: List<Article>?) {
+        if (list!=null){
+            newsAdapter = NewsAdapter(this, list)
+            newsAdapter.setonClickItem {
+                var intent = Intent(this, WebViewActivity::class.java)
+                intent.putExtra(URL, it.url)
+                startActivity(intent)
+                finish()
+                Toast.makeText(this, "${it.title}", Toast.LENGTH_SHORT).show()
+            }
+            rcv_news.adapter = newsAdapter
+        }else{
+            Toast.makeText(this, "Error when load data", Toast.LENGTH_SHORT).show()
         }
-        rcv_news.adapter = newsAdapter
+
     }
 
     override fun onRefresh() {
         viewModel.fetchListNews("us", API_KEY)
         refresh_layout.isRefreshing = false
-    }
-
-    override fun onResume() {
-        if (isStopping){
-            startActivity(Intent(this,LockScreenActivity::class.java))
-        }
-        super.onResume()
-    }
-
-    override fun onStop() {
-        isStopping = true
-        super.onStop()
     }
 
     override fun onBackPressed() {
