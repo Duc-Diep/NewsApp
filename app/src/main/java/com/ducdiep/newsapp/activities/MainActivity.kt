@@ -79,7 +79,6 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
                 var intent = Intent(this, WebViewActivity::class.java)
                 intent.putExtra(URL, it.url)
                 startActivity(intent)
-                finish()
                 Toast.makeText(this, "${it.title}", Toast.LENGTH_SHORT).show()
             }
             rcv_news.adapter = newsAdapter
